@@ -1,0 +1,1 @@
+Code club project: Assessing whether intra or inter-genomic variations hinder utility of ASVs. 
