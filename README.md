@@ -1,10 +1,11 @@
-Code club project: Assessing whether intra or inter-genomic variations hinder utility of ASVs.
+# Code Club project: Assessing whether intra and inter-genomic variations hinder utility of ASVs.
 
-Author: Gaurav Bhatti
+**Author:** Gaurav Bhatti
 
-Developed over a series of episodes led by Pat Schloss to answer an important question in microbiology and develop comfort using tools to do reproducible research.
+Developed over a series of *Code Club* episodes led by Pat Schloss to answer an important question in microbiology and develop comfort using tools to do reproducible research.
 
-Dependency:
-1) Mothur  Version 1.48.1
+### Dependencies:
+* [mothur  Version 1.48.1](https://github.com/mothur/mothur/releases)
+
 
 
