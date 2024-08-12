@@ -5,7 +5,9 @@
 Developed over a series of *Code Club* episodes led by Pat Schloss to answer an important question in microbiology and develop comfort using tools to do reproducible research.
 
 ### Dependencies:
-* [mothur  Version 1.48.1](https://github.com/mothur/mothur/releases)
+* [mothur  Version 1.48.1](https://github.com/mothur/mothur/releases)-`code/get_mothur.sh` downloads/extracts/installs mothur.
+* `wget`
+* `curl`
 
 
 
