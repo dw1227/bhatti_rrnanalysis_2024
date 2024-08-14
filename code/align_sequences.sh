@@ -8,4 +8,4 @@
 # direction
 
 code/mothur/mothur '#align.seqs(fasta=data/raw/rrnDB-5.9_16S_rRNA.fasta,
-reference=data/references/silva_seed/silva.seed_v138_1.align, flip=T,processors=6)'
+reference=data/references/silva_seed/silva.seed_v138_1.align, flip=T,processors=16)'
