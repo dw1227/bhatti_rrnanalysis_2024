@@ -11,6 +11,6 @@ curl -L https://rrndb.umms.med.umich.edu/downloads/"$archive".zip \
 
 unzip -n -d data/raw/ data/raw/"$archive".zip
 
-
+touch data/raw/"$archive"
 
  
