@@ -2,15 +2,18 @@
 
 # author: Gaurav Bhatti
 # inputs: Names of the file to be extracted from the archive (without the path or zip extension)
-# outputs: The dppropriate file into data/raw/
+# outputs: The appropriate file into data/raw/
 
-archive=$1
+target=$1
+filename=`echo $target | sed "s/.*\///"`
+path=`echo $target | sed -E "s/(.*\/).*/\1/"`
 
-curl -L https://rrndb.umms.med.umich.edu/downloads/"$archive".zip \
--o data/raw/"$archive".zip
 
-unzip -n -d data/raw/ data/raw/"$archive".zip
+curl -L https://rrndb.umms.med.umich.edu/downloads/"$filename".zip \
+-o "$target".zip
 
-touch data/raw/"$archive"
+unzip -n -d "$path" "$target".zip
+
+touch "$target" # update time stamp
 
  
