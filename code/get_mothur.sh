@@ -14,5 +14,15 @@ wget -nc -P code/ https://github.com/mothur/mothur/releases/download/v1.48.1/Mot
 unzip -n -d code/ code/Mothur.linux_7.zip
 
  
+# Touch the downloaded files to update time stamps only if the files
+# were unzipped.
+ if [[ $? -eq 0 ]]
+ then 
+     touch  code/mothur/mothur
+     rm code/Mothur.linux_7.zip
+ else
+     echo "FAIL: Could not install mothur"
+     exit 1
+ fi
 
 
