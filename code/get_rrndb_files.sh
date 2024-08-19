@@ -14,6 +14,15 @@ curl -L https://rrndb.umms.med.umich.edu/downloads/"$filename".zip \
 
 unzip -n -d "$path" "$target".zip
 
-touch "$target" # update time stamp
+# Touch the downloaded files to update time stamps only if the download
+# was successful and the files were unzipped.
+
+ if [[ $? -eq 0 ]]
+ then 
+     touch "$target" # update time stamp
+ else
+     echo "FAIL: Could not download/extract $filename"
+     exit 1
+ fi
 
  
