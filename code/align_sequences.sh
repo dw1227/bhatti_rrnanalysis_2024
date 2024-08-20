@@ -9,11 +9,11 @@
 
 # the "g" in sed below is gloabal and replaces all spaces with
 # underscore. Without "g", only first occurence is replaced.
-sed "s/ /_/g" data/raw/rrnDB-5.9_16S_rRNA.fasta >
-data/raw/rrnDB-5.9_16S_rRNA.temp.fasta
+
+sed "s/ /_/g" data/raw/rrnDB-5.9_16S_rRNA.fasta > data/raw/rrnDB-5.9_16S_rRNA.temp.fasta
 
 
-code/mothur/mothur
+code/mothur/mothur \
 '#align.seqs(fasta=data/raw/rrnDB-5.9_16S_rRNA.temp.fasta,
 reference=data/references/silva_seed/silva.seed_v138_1.align,
 flip=T,
