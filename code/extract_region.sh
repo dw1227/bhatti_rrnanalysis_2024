@@ -51,7 +51,7 @@
 
  if [[ $? -eq 0 ]]
  then 
-     sed "s/^\.*/-/" $path/rrnDB-5.9_16S_rRNA.pcr.filter.fasta > $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta
+     sed "s/^\.+/-/" $path/rrnDB-5.9_16S_rRNA.pcr.filter.fasta > $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta
      touch $path/rrnDB-5.9_16S_rRNA.bad.accnos
      touch $path/rrnDB-5.9_16S_rRNA.scrap.pcr.align
  else
