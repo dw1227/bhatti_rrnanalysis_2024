@@ -21,7 +21,7 @@ processors=30)'
 
 if [[ $? -eq 0 ]]
 then 
-    mv data/raw/rrnDB-5.9_16S_rRNA.temp.align
+    mv data/raw/rrnDB-5.9_16S_rRNA.temp.align \
     data/raw/rrnDB-5.9_16S_rRNA.align
     rm data/raw/rrnDB-5.9_16S_rRNA.temp.fasta
 else
