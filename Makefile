@@ -34,4 +34,8 @@ data/%/rrnDB.align data/%/rrnDB.bad.accnos : code/extract_region.sh\
 	$< $@ 
 
 
+data/%/rrnDB.unique.align data/%/rrnDB.count_table : code/count_unique_seqs.sh\
+	                                                 data/%/rrnDB.align\
+													 code/mothur/mothur
+	$< $@ 
 
