@@ -52,16 +52,31 @@
 
  if [[ $? -eq 0 ]]
  then 
+     
      sed "/^[^>]/ s/\./-/g" $path/rrnDB-5.9_16S_rRNA.pcr.filter.fasta > \
      $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta
-     # Test Driven Development
-     # grep -v "^>" $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta | grep "^\." | head   
      
+    # Test Driven Development   
+    # cp $path/rrnDB-5.9_16S_rRNA.pcr.filter.fasta  \
+    # $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta
+
      touch $path/rrnDB-5.9_16S_rRNA.bad.accnos
      touch $path/rrnDB-5.9_16S_rRNA.scrap.pcr.align
  else
      echo "FAIL: mothur ran into a problem"
      exit 1
+ fi
+
+
+ # Test Driven Development
+ TEST=`grep -v "^>" $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta | \
+ grep -c "^\."`
+
+
+ if [[ $TEST -ne 0 ]]
+ then
+     echo "FAIL: sequence contain periods"
+     exit 1 
  fi
 
  # clean up the file names
