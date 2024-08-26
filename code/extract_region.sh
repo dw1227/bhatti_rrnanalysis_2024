@@ -39,6 +39,7 @@
 
  mkdir -p $path
 
+
  code/mothur/mothur "#pcr.seqs(fasta=data/raw/rrnDB-5.9_16S_rRNA.align,
             start=$start,
             end=$end,
@@ -51,7 +52,11 @@
 
  if [[ $? -eq 0 ]]
  then 
-     sed "s/^\.+/-/" $path/rrnDB-5.9_16S_rRNA.pcr.filter.fasta > $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta
+     sed "/^[^>]/ s/\./-/g" $path/rrnDB-5.9_16S_rRNA.pcr.filter.fasta > \
+     $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta
+     # Test Driven Development
+     # grep -v "^>" $path/rrnDB-5.9_16S_rRNA.pcr.filter.temp.fasta | grep "^\." | head   
+     
      touch $path/rrnDB-5.9_16S_rRNA.bad.accnos
      touch $path/rrnDB-5.9_16S_rRNA.scrap.pcr.align
  else
