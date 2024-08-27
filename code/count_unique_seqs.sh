@@ -6,7 +6,7 @@
 # outputs: data/raw/rrnDB-5.9_16S_rRNA.align
 
 
-target=$1 #data/v19/rrnDB.unique.align
+target=data/v19/rrnDB.unique.align
 
 stub=`echo $target | sed -E "s/(.*rrnDB).*/\1/"`
 stub_temp=$stub.temp
@@ -22,7 +22,8 @@ $temp_align
 grep "^>" $temp_align | sed -E "s/>((.*)\|.*\|.*)/\1 \2/" > \
 $temp_groups
 
-code/mothur/mothur "#unique.seqs(fasta=$temp_align);"
+code/mothur/mothur "#unique.seqs(fasta=$temp_align, \
+    format=name);count.seqs(group=$temp_groups,compress=FALSE)"
 
 mv $stub_temp.unique.align $stub.unique.align
 mv $stub_temp.count_table $stub.count_table
