@@ -6,7 +6,7 @@
 # outputs: data/raw/rrnDB-5.9_16S_rRNA.align
 
 
-target=data/v19/rrnDB.unique.align
+target=$1
 
 stub=`echo $target | sed -E "s/(.*rrnDB).*/\1/"`
 stub_temp=$stub.temp
