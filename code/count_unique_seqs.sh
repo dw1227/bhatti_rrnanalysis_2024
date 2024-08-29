@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
 # author: Gaurav Bhatti
-# inputs: data/raw/rrnDB-5.9_16S_rRNA.fasta
-#         data/references/silva_seed/silva.seed_v138_1.align
-# outputs: data/raw/rrnDB-5.9_16S_rRNA.align
+#
+# description: takes in fasta file and uniques and counts the
+# sequences.It then converts the count table to a tidy tibble with
+# columns asv, genome, and count to indicate the number of ties each
+# asv appears in a genome. Zero counts are discarded.
+#
+# input: target - name of either the count_tibble or align file
+#
+# output: target - created and stored
 
 
 target=$1
@@ -25,8 +31,10 @@ $temp_groups
 code/mothur/mothur "#unique.seqs(fasta=$temp_align, \
     format=name);count.seqs(group=$temp_groups,compress=FALSE)"
 
+code/run_r_script.sh code/convert_count_table_to_tibble.R \
+ $stub_temp.count_table $stub.count_tibble
+
 mv $stub_temp.unique.align $stub.unique.align
-mv $stub_temp.count_table $stub.count_table
 
 rm $stub_temp.*
 
