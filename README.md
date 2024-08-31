@@ -23,6 +23,9 @@ Developed over a series of *Code Club* episodes led by Pat Schloss to answer an 
 * [mothur  Version 1.48.1](https://github.com/mothur/mothur/releases)-`code/get_mothur.sh` downloads/extracts/installs mothur.
 * `wget`
 * `curl`
+* `R (v. 4.4.0)`
+    * `tidyverse (v. 2.0.2)`
+    * `data.table (v. 1.15.4)`
 
 
 
