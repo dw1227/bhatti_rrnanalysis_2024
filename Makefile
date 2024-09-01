@@ -41,3 +41,9 @@ data/%/rrnDB.unique.align data/%/rrnDB.count_tibble : code/count_unique_seqs.sh\
 													 code/mothur/mothur
 	$< $@ 
 
+README.md : README.Rmd \
+	        code/run_r_script.sh \
+			code/render_markdown.R
+	code/run_r_script.sh code/render_markdown.R "README.Rmd"
+
+
