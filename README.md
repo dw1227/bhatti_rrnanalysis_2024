@@ -1,36 +1,42 @@
+Code Club project: Assessing (in 2024) whether intra and inter-genomic
+variations hinder utility of ASVs.
+================
+Gaurav Bhatti; Pat Schloss
+08/31/2024
+
 # Developed over a series of *Code Club* episodes led by Pat Schloss to answer an important question in microbiology and develop comfort using tools to do reproducible research.
 
 ## Questions
 
--   Within a genome, how many distinct copies of the 16S rRNA gene
-    relative to the number of copies per genome? How far apart are these
-    sequences from each other? How does this scale from a genome to
-    kingdoms?
+- Within a genome, how many distinct copies of the 16S rRNA gene
+  relative to the number of copies per genome? How far apart are these
+  sequences from each other? How does this scale from a genome to
+  kingdoms?
 
--   Within a taxa (any level), how many ASVs from that taxa are shared
-    with sister taxa? How does this change with taxonomic level ?
-    Variable region?
+- Within a taxa (any level), how many ASVs from that taxa are shared
+  with sister taxa? How does this change with taxonomic level ? Variable
+  region?
 
--   Make sure we have taxonomic data for all our genomes
+- Make sure we have taxonomic data for all our genomes
 
--   Read fasta files into R (do it on our own)
+- Read fasta files into R (do it on our own)
 
--   inner\_join with tsv file
+- inner_join with tsv file
 
--   group\_by/summarize to count the number of sequences and copies per
-    genome.
+- group_by/summarize to count the number of sequences and copies per
+  genome.
 
 ### Dependencies:
 
--   [mothur Version
-    1.48.1](https://github.com/mothur/mothur/releases)-`code/get_mothur.sh`
-    downloads/extracts/installs mothur.
--   `wget`
--   `curl`
--   R version 4.4.0 (2024-04-24)
-    -   `tidyverse` (v. 2.0.0)
-    -   `data.table` (v. 1.15.4)
-    -   `rmarkdown` (v. 2.27)
+- [mothur Version
+  1.48.1](https://github.com/mothur/mothur/releases)-`code/get_mothur.sh`
+  downloads/extracts/installs mothur.
+- `wget`
+- `curl`
+- R version 4.4.0 (2024-04-24)
+  - `tidyverse` (v. 2.0.0)
+  - `data.table` (v. 1.15.4)
+  - `rmarkdown` (v. 2.27)
 
 ### My computer
 
