@@ -1,6 +1,4 @@
-Developed over a series of *Code Club* episodes led by Pat Schloss to
-answer an important question in microbiology and develop comfort using
-tools to do reproducible research.
+# Developed over a series of *Code Club* episodes led by Pat Schloss to answer an important question in microbiology and develop comfort using tools to do reproducible research.
 
 ## Questions
 
