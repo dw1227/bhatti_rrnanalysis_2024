@@ -47,3 +47,9 @@ README.md : README.Rmd \
 	code/run_r_script.sh code/render_markdown.R "README.Rmd"
 
 
+exploratory/genome_sens_spec_2024-08-31.md: exploratory/genome_sens_spec_2024-08-31.Rmd \
+	        code/run_r_script.sh \
+			code/render_markdown.R
+	code/run_r_script.sh code/render_markdown.R "exploratory/genome_sens_spec_2024-08-31.Rmd"
+
+
