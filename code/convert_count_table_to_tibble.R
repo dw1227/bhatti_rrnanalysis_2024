@@ -3,7 +3,7 @@ library(tidyverse)
 # library(vroom)
 library(data.table)
 
-# name: conver_count_table_to_tibble.R
+# name: convert_count_table_to_tibble.R
 #
 # author: Gaurav Bhatti
 #

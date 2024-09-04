@@ -1,0 +1,103 @@
+---
+title: "Analyzing the sensitivity and specificity of ASVs for discriminating between genomes"
+author: "Gaurav Bhatti; Pat Schloss"
+date: "09/04/2024"
+output:
+ github_document:
+   html_preview: false
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r, message=FALSE}
+library(tidyverse)
+library(here)
+```
+
+
+### Determine the number of *rrn* operons across genomes
+
+Our analysis will use full length sequences. But since we know that the sub regions are less diverse than the full length sequence. So does the number of ASVs per genome differ than for full length sequences? Are ASVs as specific when using the V4 region compared to full length sequences?
+
+
+```{r n_rrn}
+count_tibble<- read_tsv(here("data/processed/rrnDB.count_tibble"),
+                        col_types = "cccd")
+```
+
+We want to count and plot the number of copies per genome.
+
+```{r}
+count_tibble |> 
+  filter(region=="v19") |> 
+  group_by(genome) |> 
+  summarize(n_rrn = sum(count)) |> 
+  ggplot(aes(x=n_rrn))+
+  geom_histogram(binwidth = 1)
+
+count_tibble |> 
+  filter(region=="v19") |> 
+  group_by(genome) |> 
+  summarize(n_rrn = sum(count)) |> 
+  count(n_rrn) |> 
+  mutate(fraction= 100*n/sum(n))
+
+```
+
+
+We see that most genomes (92%) have more than 1 copy of the *rrn* operon. I wonder whether those different copies are the same sequence/ASV...
+
+### Determine the number of ASVs per genome
+
+Considering that most genomes have more than 1 copy of the *rrn* operon, we need to know whether they all have the same ASV. Otherwise we run the risk of splitting a single genome into multiple ASVs.
+
+```{r}
+count_tibble |> 
+  group_by(region,genome) |> 
+  summarise(n_asv= n(),
+            n_rrn = sum(count)) |> 
+  group_by(region,n_rrn) |> 
+  summarize(med_n_asv= median(n_asv),
+            mean_n_asv=mean(n_asv),
+            lg_n_asv= quantile(n_asv,0.25),
+            up_n_asv= quantile(n_asv,0.75)) |> 
+  filter(n_rrn==7)
+
+
+count_tibble |> 
+  group_by(region,genome) |> 
+  summarise(n_asv= n(),
+            n_rrn = sum(count)) |> 
+  ggplot(aes(x=n_rrn,y=n_asv,color=region))+
+  geom_smooth(method = "lm")+
+  geom_point()
+
+```
+
+
+Surprisingly (or not) the number of unique ASVs increases at the rate of about 2 ASVS per 3 copies of *rrn* operon in the genome.The sub-regions of the 16S rRNA gene have fewer ASVs per *rrn* operon.
+
+### Determine whether an ASV is specific to the genome they are found in.
+
+Instead of looking at the number of ASVs per genome, we want to see the number of genomes per ASV.
+
+```{r}
+count_tibble |> 
+  group_by(region,asv) |> 
+  summarise(n_genomes= n()) |> 
+  count(n_genomes) |> 
+  mutate(fraction=100*n/sum(n)) |> 
+  filter(n_genomes==1)
+
+```
+
+We see that with full length sequences, 82% of the ASVs were unique to the genome. For the sub regions, about 76% of the ASvs were unique to the genome.
+
+
+
+### To be determined
+* Can we correct for over representation?
+* Consider analysis at species, genus, family, etc. levels.
+* Consider looking at more broad definition of an ASV (upto 3% differences in sequences).
+

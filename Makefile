@@ -31,7 +31,9 @@ data/raw/rrnDB-5.9_16S_rRNA.align: code/align_sequences.sh\
 data/%/rrnDB.align data/%/rrnDB.bad.accnos : code/extract_region.sh\
 	                                         code/mothur/mothur\
                                              data/raw/rrnDB-5.9_16S_rRNA.align
-	$< $@ 
+	$< $@
+	
+.PRECIOUS: data/%/rrnDB.align
 
 
 data/%/rrnDB.unique.align data/%/rrnDB.count_tibble : code/count_unique_seqs.sh\
@@ -41,15 +43,29 @@ data/%/rrnDB.unique.align data/%/rrnDB.count_tibble : code/count_unique_seqs.sh\
 													 code/mothur/mothur
 	$< $@ 
 
+
+
+
+data/processed/rrnDB.count_tibble: code/run_r_script.sh \
+	                               code/combine_count_tibble_files.R \
+								   data/v19/rrnDB.count_tibble \
+								   data/v4/rrnDB.count_tibble \
+								   data/v34/rrnDB.count_tibble \
+								   data/v45/rrnDB.count_tibble 
+	$^
+
+
+
+
 README.md : README.Rmd \
 	        code/run_r_script.sh \
 			code/render_markdown.R
 	code/run_r_script.sh code/render_markdown.R "README.Rmd"
 
 
-exploratory/genome_sens_spec_2024-08-31.md: exploratory/genome_sens_spec_2024-08-31.Rmd \
+exploratory/genome_sens_spec_2024-09-04.md: exploratory/genome_sens_spec_2024-09-04.Rmd \
 	        code/run_r_script.sh \
 			code/render_markdown.R
-	code/run_r_script.sh code/render_markdown.R "exploratory/genome_sens_spec_2024-08-31.Rmd"
+	code/run_r_script.sh code/render_markdown.R "exploratory/genome_sens_spec_2024-09-04.Rmd"
 
 
