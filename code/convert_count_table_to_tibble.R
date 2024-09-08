@@ -1,8 +1,3 @@
-# The R code goes here
-library(tidyverse)
-# library(vroom)
-library(data.table)
-
 # name: convert_count_table_to_tibble.R
 #
 # author: Gaurav Bhatti
@@ -11,6 +6,13 @@ library(data.table)
 #
 # output: tidy data frame with asv, genome and count as columns
 # note: we expect command line arguements in order of input,output.
+
+
+# The R code goes here
+library(tidyverse)
+# library(vroom)
+library(data.table)
+
 
 
 # a custom function to covert very large wide file to long format using tidyverse

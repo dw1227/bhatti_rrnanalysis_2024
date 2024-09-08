@@ -21,6 +21,18 @@ data/raw/rrnDB-5.9.tsv: code/get_rrndb_files.sh
 	code/get_rrndb_files.sh $@
 
 
+data/references/sp_spp_lookup.tsv: code/get_sp_spp_lookup.sh
+	$<
+
+data/references/genome_id_taxonomy.tsv: code/run_r_script.sh \
+	        code/get_genome_id_taxonomy.R \
+	        data/raw/rrnDB-5.9.tsv \
+	        data/references/sp_spp_lookup.tsv \
+          data/raw/rrnDB-5.9_pantaxa_stats_NCBI.tsv
+	$< code/get_genome_id_taxonomy.R
+	
+	
+
 data/raw/rrnDB-5.9_16S_rRNA.align: code/align_sequences.sh\
 	                               code/mothur/mothur\
                                    data/references/silva_seed/silva.seed_v138_1.align\
