@@ -1,6 +1,6 @@
 data/
 code/mothur/
-
+code/get_genome_id_taxonomy_rdp_archive.R
 
 exercises.txt
 *logfile
