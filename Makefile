@@ -83,3 +83,15 @@ exploratory/genome_sens_spec_2024-09-04.md: exploratory/genome_sens_spec_2024-09
 	code/run_r_script.sh code/render_markdown.R "exploratory/genome_sens_spec_2024-09-04.Rmd"
 
 
+exploratory/2024-09-09-taxa-representation.md: exploratory/2024-09-09-taxa-representation.Rmd\
+	        data/references/genome_id_taxonomy.tsv\
+			data/processed/rrnDB.count_tibble\
+	        code/run_r_script.sh \
+			code/render_markdown.R
+	code/run_r_script.sh code/render_markdown.R $<
+
+
+
+
+
+
