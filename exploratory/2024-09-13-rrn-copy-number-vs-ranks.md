@@ -62,6 +62,6 @@ rank_taxon_rrns |>
 ```
 
 ![](2024-09-13-rrn-copy-number-vs-ranks_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
-Bacteria have more copies than Archaea Even after correcting for the
-number genomes per species, there is is wide variation in the number of
-*rrn* operons per taxonomic group
+\* Bacteria have more copies than Archaea \* Even after correcting for
+the number genomes per species, there is is wide variation in the number
+of *rrn* operons per taxonomic group
