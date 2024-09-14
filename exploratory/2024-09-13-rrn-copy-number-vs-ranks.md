@@ -63,7 +63,6 @@ rank_taxon_rrns |>
   # geom_line(data=mean_of_means,aes(x=rank,y=mean_of_means),
   #           color="red",size=2,group=1,
   #           inherit.aes = F)+
-  
   geom_segment(data=mean_of_means,
                aes(x=1:n_ranks-jitter_width,xend=1:n_ranks+jitter_width,
                    y=mean_of_means,yend= mean_of_means),
