@@ -1,0 +1,67 @@
+Quantifying the number of *rrn* operons across taxonomic ranks
+================
+G Bhatti; P Schloss
+9/13/2024
+
+``` r
+library(tidyverse)
+library(here)
+
+metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
+                    col_types = cols(.default = col_character())) |> 
+  mutate(strain=if_else(scientific_name==species,NA_character_,scientific_name)) |> 
+  select(-scientific_name) #|> 
+  # pivot_longer(-genome_id,names_to="rank",values_to = "taxon") |> 
+  # drop_na(taxon) |> 
+  # mutate(rank=factor(rank,
+  #                    levels=c("kingdom","phylum","class","order",
+  #                             "family","genus","species","strain")))
+
+asv<- read_tsv(here("data/processed/rrnDB.count_tibble"),
+               col_types = cols(.default = col_character(),
+                                count= col_integer()))
+
+
+metadata_asv<- inner_join(metadata, asv, by=c("genome_id"="genome"))
+```
+
+### Plot the number of *taxa*rrn\* copies per taxonomic rank
+
+Our analysis will use fill length sequences. We want to count and plot
+the number of copies per *taxonomic rank*. Before calculating the
+averages for each taxonomic group, we should calculate average number of
+copies for each species. This will allow us to control for uneven number
+of genomes in each species. within each rank.
+
+``` r
+rank_taxon_rrns<- metadata_asv |> 
+  filter(region =="v19") |> 
+  group_by(kingdom, phylum, class, order, family, genus, species, genome_id) |> 
+  summarize(n_rrns=sum(count),.groups = "drop") |> 
+  group_by(kingdom, phylum, class, order, family, genus, species) |> 
+  summarise(mean_rrns= mean(n_rrns),.groups = "drop") |> 
+  pivot_longer(-mean_rrns,
+               names_to = "rank",
+               values_to="taxon") |> 
+  drop_na(taxon) |> 
+  mutate(rank=factor(rank,
+                     levels=c("kingdom","phylum","class","order",
+                              "family","genus","species","strain"))) |> 
+  group_by(rank,taxon) |> 
+  summarise(mean_rrns=mean(mean_rrns),.groups = "drop")
+
+rank_taxon_rrns |> 
+  ggplot(aes(x=rank,y=mean_rrns)) + 
+  geom_jitter(width=0.3,alpha=0.3) +
+  theme_classic()+
+  labs(x=NULL,
+       y="Mean number of rrn copies per genome",
+       title= "There is wide variation at the species\nlevel in the number of rrn copies",
+       subtitle = "Each point represents a single taxon\nwithin that rank,
+       numbers based on average species copy number")
+```
+
+![](2024-09-13-rrn-copy-number-vs-ranks_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+Bacteria have more copies than Archaea Even after correcting for the
+number genomes per species, there is is wide variation in the number of
+*rrn* operons per taxonomic group
