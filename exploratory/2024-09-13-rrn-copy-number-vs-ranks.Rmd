@@ -16,12 +16,8 @@ library(here)
 metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
                     col_types = cols(.default = col_character())) |> 
   mutate(strain=if_else(scientific_name==species,NA_character_,scientific_name)) |> 
-  select(-scientific_name) #|> 
-  # pivot_longer(-genome_id,names_to="rank",values_to = "taxon") |> 
-  # drop_na(taxon) |> 
-  # mutate(rank=factor(rank,
-  #                    levels=c("kingdom","phylum","class","order",
-  #                             "family","genus","species","strain")))
+  select(-scientific_name)
+
 
 asv<- read_tsv(here("data/processed/rrnDB.count_tibble"),
                col_types = cols(.default = col_character(),
@@ -31,7 +27,7 @@ asv<- read_tsv(here("data/processed/rrnDB.count_tibble"),
 metadata_asv<- inner_join(metadata, asv, by=c("genome_id"="genome"))
 ```
 
-### Plot the number of *taxa*rrn* copies per taxonomic rank
+### Plot the number of *rrn* copies per taxonomic rank
 
 Our analysis will use fill length sequences. We want to count and plot the number
 of copies per *taxonomic rank*. Before calculating the averages for each taxonomic 
@@ -56,15 +52,40 @@ rank_taxon_rrns<- metadata_asv |>
   group_by(rank,taxon) |> 
   summarise(mean_rrns=mean(mean_rrns),.groups = "drop")
 
+mean_of_means<- rank_taxon_rrns |> 
+  group_by(rank) |> 
+  summarise(mean_of_means=mean(mean_rrns),.groups = "drop")
+```
+
+
+
+```{r}
+jitter_width <- 0.3
+n_ranks<-nrow(mean_of_means)
 rank_taxon_rrns |> 
-  ggplot(aes(x=rank,y=mean_rrns)) + 
-  geom_jitter(width=0.3,alpha=0.3) +
+  ggplot(aes(x=rank,y=mean_rrns)) +   
+
+  geom_jitter(width=jitter_width,color="gray") +
+  # geom_point(data=mean_of_means,aes(x=rank,y=mean_of_means),
+  #            color="red",size=3,inherit.aes = F)+
+  # geom_line(data=mean_of_means,aes(x=rank,y=mean_of_means),
+  #           color="red",size=2,group=1,
+  #           inherit.aes = F)+
+  
+  geom_segment(data=mean_of_means,
+               aes(x=1:n_ranks-jitter_width,xend=1:n_ranks+jitter_width,
+                   y=mean_of_means,yend= mean_of_means),
+               color="red",size=2,inherit.aes = F,lineend = "round")+
+ # geom_boxplot(outlier.shape = NA,fill=NA)+
   theme_classic()+
   labs(x=NULL,
        y="Mean number of rrn copies per genome",
-       title= "There is wide variation at the species\nlevel in the number of rrn copies",
-       subtitle = "Each point represents a single taxon\nwithin that rank,
-       numbers based on average species copy number")
+       title= "There is wide variation at the species level in the number of rrn copies",
+       subtitle = "Each point represents a single taxon within that rank, numbers based\non average species copy number")+
+  scale_x_discrete(breaks=c("kingdom","phylum","class","order",
+                            "family","genus","species"),
+                   labels=str_to_title(c("kingdom","phylum","class","order",
+                            "family","genus","species")))
 ```
 
 
