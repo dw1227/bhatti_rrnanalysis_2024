@@ -6,6 +6,7 @@ G Bhatti; P Schloss
 ``` r
 library(tidyverse)
 library(here)
+library(ggridges)
 
 metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
                     col_types = cols(.default = col_character())) |> 
@@ -49,6 +50,10 @@ rank_taxon_rrns<- metadata_asv |>
 mean_of_means<- rank_taxon_rrns |> 
   group_by(rank) |> 
   summarise(mean_of_means=mean(mean_rrns),.groups = "drop")
+
+median_of_means<- rank_taxon_rrns |> 
+  group_by(rank) |> 
+  summarise(median_of_means=median(mean_rrns),.groups = "drop")
 ```
 
 ``` r
@@ -82,10 +87,33 @@ rank_taxon_rrns |>
     ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
     ## ℹ Please use `linewidth` instead.
     ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 
 ![](2024-09-13-rrn-copy-number-vs-ranks_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+Here’s another way of looking at the data…
+
+``` r
+rank_taxon_rrns |> 
+  ggplot(aes(x=mean_rrns,y=rank)) +  
+  geom_density_ridges(stat="binline",binwidth=1,scale=0.9)+
+  # geom_density(alpha=0.2,adjust=1.5)
+  # geom_histogram(binwidth =1,position = "dodge")
+  geom_point(data=median_of_means,aes(y=1:n_ranks+0.1,x=median_of_means),
+             color="red",size=3,inherit.aes = F)+
+
+   theme_classic()+
+  labs(y=NULL,
+       x="Mean number of rrn copies per genome",
+       title= "The distribution of rrn copies per genome is consistent across ranks",
+       subtitle = "Each point represents a single taxon within that rank, numbers based\non average species copy number")+
+  scale_y_discrete(breaks=c("kingdom","phylum","class","order",
+                            "family","genus","species"),
+                   labels=str_to_title(c("kingdom","phylum","class","order",
+                            "family","genus","species")))
+```
+
+![](2024-09-13-rrn-copy-number-vs-ranks_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 - Bacteria have more copies than Archaea
 - Even after correcting for the number genomes per species, there is is
