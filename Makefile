@@ -99,3 +99,9 @@ exploratory/2024-09-13-rrn-copy-number-vs-ranks.md: exploratory/2024-09-13-rrn-c
 	code/run_r_script.sh code/render_markdown.R $<
 
 
+exploratory/2024-09-21-asv-species-coverage.md: exploratory/2024-09-21-asv-species-coverage.Rmd\
+	        data/references/genome_id_taxonomy.tsv\
+			    data/processed/rrnDB.count_tibble\
+	        code/run_r_script.sh \
+			    code/render_markdown.R
+	code/run_r_script.sh code/render_markdown.R $<
