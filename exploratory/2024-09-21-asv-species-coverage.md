@@ -6,7 +6,7 @@ G Bhatti; P Schloss
 ``` r
 library(tidyverse)
 library(here)
-library(ggridges)
+library(knitr)
 
 metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
                     col_types = cols(.default = col_character())) |> 
@@ -40,16 +40,18 @@ the full length sequences, let’s also look at the V4, V3-4, and V4-5
 regions.
 
 ``` r
-# x= number of genomes fo a particular species
+# x= number of genomes for a particular species
 # y= ratio of number of ASVs per genome
 # each point represents a different species
 # each facet represents a different region
 species_asvs<-metadata_asv |> 
-  select(genome_id,species,region,asv) |> 
+  select(genome_id,species,region,asv,count) |> 
   group_by(region,species) |> 
   summarize(n_genomes= n_distinct(genome_id),
+            n_rrns=sum(count)/n_genomes,
             n_asvs= n_distinct(asv),
-            asv_rate=n_asvs/n_genomes,.groups = "drop") 
+            asv_rate=n_asvs/n_genomes,
+            .groups = "drop") 
 
 region_labels<- c("V1-V9","V4","V3-V4","V4-V5")
 names(region_labels)=c("v19","v4","v34","v45")
@@ -71,6 +73,42 @@ species_asvs |>
     ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 
 ![](2024-09-21-asv-species-coverage_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+``` r
+# species name, number of genomes, average number of rrns, number of ASVs across
+# genomes for each region of 16S rRNA gene.
+count_table<- species_asvs |>   
+  select(species, region, n_genomes,n_rrns,n_asvs) |> 
+  group_by(species) |> 
+  mutate(n_genomes=max(n_genomes),
+         n_rrns= max(n_rrns)) |> 
+  ungroup() |> 
+  pivot_wider(names_from = region,
+              values_from = n_asvs) |> 
+  arrange(species) 
+
+# see also kableExtra
+count_table |> 
+  arrange(desc(n_genomes)) |> 
+  top_n(n_genomes,n=10) |> 
+  kable(caption="Ten most commonly sequenced species",
+        digits=2)
+```
+
+| species                    | n_genomes | n_rrns |  v19 | v34 |  v4 | v45 |
+|:---------------------------|----------:|-------:|-----:|----:|----:|----:|
+| Escherichia coli           |      3337 |   6.97 | 2838 | 768 | 587 | 792 |
+| Klebsiella pneumoniae      |      1885 |   7.97 | 1571 | 576 | 341 | 459 |
+| Salmonella enterica        |      1549 |   6.99 | 1437 | 382 | 267 | 384 |
+| Staphylococcus aureus      |      1183 |   5.75 |  918 | 196 | 104 | 186 |
+| Pseudomonas aeruginosa     |       821 |   4.00 |  257 |  75 |  48 |  62 |
+| Bordetella pertussis       |       634 |   3.00 |   30 |   8 |   5 |   9 |
+| Acinetobacter baumannii    |       610 |   5.98 |  275 | 108 |  56 |  74 |
+| Campylobacter jejuni       |       421 |   2.54 |   83 |  25 |  15 |  27 |
+| Mycobacterium tuberculosis |       396 |   1.00 |   20 |   5 |   2 |   6 |
+| Helicobacter pylori        |       368 |   1.97 |  240 |  35 |  28 |  44 |
+
+Ten most commonly sequenced species
 
 ### Conclusions
 

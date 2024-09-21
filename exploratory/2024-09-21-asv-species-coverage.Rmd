@@ -12,7 +12,7 @@ editor_options:
 ```{r setup, message=FALSE}
 library(tidyverse)
 library(here)
-library(ggridges)
+library(knitr)
 
 metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
                     col_types = cols(.default = col_character())) |> 
@@ -43,16 +43,18 @@ genomes in the species versus the number of genomes. Besides looking at the full
 length sequences, let's also look at the V4, V3-4, and V4-5 regions.
 
 ```{r}
-# x= number of genomes fo a particular species
+# x= number of genomes for a particular species
 # y= ratio of number of ASVs per genome
 # each point represents a different species
 # each facet represents a different region
 species_asvs<-metadata_asv |> 
-  select(genome_id,species,region,asv) |> 
+  select(genome_id,species,region,asv,count) |> 
   group_by(region,species) |> 
   summarize(n_genomes= n_distinct(genome_id),
+            n_rrns=sum(count)/n_genomes,
             n_asvs= n_distinct(asv),
-            asv_rate=n_asvs/n_genomes,.groups = "drop") 
+            asv_rate=n_asvs/n_genomes,
+            .groups = "drop") 
 
 region_labels<- c("V1-V9","V4","V3-V4","V4-V5")
 names(region_labels)=c("v19","v4","v34","v45")
@@ -69,6 +71,29 @@ species_asvs |>
   scale_x_log10()+
   scale_y_log10()+
   theme_classic()
+```
+
+```{r}
+# species name, number of genomes, average number of rrns, number of ASVs across
+# genomes for each region of 16S rRNA gene.
+count_table<- species_asvs |>   
+  select(species, region, n_genomes,n_rrns,n_asvs) |> 
+  group_by(species) |> 
+  mutate(n_genomes=max(n_genomes),
+         n_rrns= max(n_rrns)) |> 
+  ungroup() |> 
+  pivot_wider(names_from = region,
+              values_from = n_asvs) |> 
+  arrange(species) 
+
+# see also kableExtra
+count_table |> 
+  arrange(desc(n_genomes)) |> 
+  top_n(n_genomes,n=10) |> 
+  kable(caption="Ten most commonly sequenced species",
+        digits=2)
+  
+
 ```
 
 ### Conclusions
