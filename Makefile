@@ -105,3 +105,12 @@ exploratory/2024-09-21-asv-species-coverage.md: exploratory/2024-09-21-asv-speci
 	        code/run_r_script.sh \
 			    code/render_markdown.R
 	code/run_r_script.sh code/render_markdown.R $<
+	
+exploratory/2024-09-22-asv-taxa-overlap.md: exploratory/2024-09-22-asv-taxa-overlap.Rmd\
+	        data/references/genome_id_taxonomy.tsv\
+			    data/processed/rrnDB.count_tibble\
+	        code/run_r_script.sh \
+			    code/render_markdown.R
+	code/run_r_script.sh code/render_markdown.R $<
+	
+	
