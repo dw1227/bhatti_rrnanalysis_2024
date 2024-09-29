@@ -44,46 +44,103 @@ later but let us now answer the general question for any two taxa from the same 
 
 
 ```{r}
-# metadata_asv - input data
-overlap_data<- metadata_asv |> 
-# - focus on taxonomic ranks - from kingdom to species, asvs and region
-select(-genome_id,-count,-strain) |> 
-# - make data frame tidy
-pivot_longer(cols=c(-asv,-region),
-             names_to = "rank",
-             values_to = "taxon") |> 
-# - remove lines from data where we don't have a taxonomy
-  drop_na(taxon) |> 
-# - remove redundant lines
-  distinct() |> 
-# for each region and taxonomic rank, group by asvs
-  group_by(region,rank,asv) |> 
-# - for each asv - count the number of taxa
-  summarize(n_taxa=n(),.groups = "drop_last") |> 
-# - count the number of asvs that appear in more than one taxa
-  count(n_taxa) |> 
-# - find the ratio of # asvs appearing in multiple taxa to the total # of asvs
-  summarize(overlap=100*sum((n_taxa>1)*n)/sum(n),.groups = "drop") |> 
-  mutate(rank=factor(rank,levels=c("kingdom","phylum",
-                                   "class","order","family","genus","species"))) 
+# set RNG seed to bday
+set.seed(19841509)
 
+
+
+get_subsample_result<- function(threshold)
+{
+  # metadata_asv - species, genome_ids
+  subsample_species<- metadata_asv |> 
+    select(genome_id,species) |> 
+  # return the distinct/unique rows
+    distinct() |> 
+  # group by species
+    group_by(species) |> 
+  # slice_sample on each species for N geneomes
+    slice_sample(n=threshold) |> 
+    ungroup()
+  
+  good_species<- subsample_species |>  
+  # count number of genomes in each species
+    count(species) |> 
+  # return species that have N genomes/filter out species with fewer 
+    filter(n==threshold) |> 
+    select(species) 
+  
+  # going back to original list of species/genomes -return genome_ids from
+  # species with atleast  N genomes
+  subsampled_genomes<- subsample_species |> 
+    inner_join(good_species,by="species") |> 
+    select(genome_id)
+  
+  
+  # metadata_asv - input data
+  overlap_data<- metadata_asv |> 
+  # genome_ids from species with atleast  N genomes
+  inner_join(subsampled_genomes,by="genome_id") |> 
+  # - focus on taxonomic ranks - from kingdom to species, asvs and region
+  select(-genome_id,-count,-strain) |> 
+  # - make data frame tidy
+  pivot_longer(cols=c(-asv,-region),
+               names_to = "rank",
+               values_to = "taxon") |> 
+  # - remove lines from data where we don't have a taxonomy
+    drop_na(taxon) |> 
+  # - remove redundant lines
+    distinct() |> 
+  # for each region and taxonomic rank, group by asvs
+    group_by(region,rank,asv) |> 
+  # - for each asv - count the number of taxa
+    summarize(n_taxa=n(),.groups = "drop_last") |> 
+  # - count the number of asvs that appear in more than one taxa
+    count(n_taxa) |> 
+  # - find the ratio of # asvs appearing in multiple taxa to the total # of asvs
+    summarize(overlap=100*sum((n_taxa>1)*n)/sum(n),.groups = "drop") |> 
+    mutate(rank=factor(rank,levels=c("kingdom","phylum",
+                                     "class","order","family","genus","species"))) 
+  
+  return(overlap_data)
+}
+
+subsample_iterations <- map_dfr(1:100,~get_subsample_result(threshold = 1),
+                                .id="iterations")
+
+summary_overlap_data<- subsample_iterations |> 
+  group_by(region,rank) |> 
+  summarize(mean_overlap= mean(overlap),
+            lci= quantile(overlap,0.025),
+            uci=quantile(overlap,0.975),
+            .groups = "drop")
 
 # Create a plot showing specificity at each taxonomic rank for each region 
-overlap_data |> 
+summary_overlap_data |> 
 # x= taxonomic rank
 # y= specificity or  % of asvs found in more than one taxa
-ggplot(aes(x=rank,y=overlap,group=region,color=region)) +
+ggplot(aes(x=rank,y=mean_overlap,ymin=lci,ymax=uci,
+           group=region,color=region)) +
 # geom= line plot
 # different lines for each region of 16S rRNA gene
-  geom_line()
+  geom_line()+
+  geom_linerange(show.legend = F)
 
 
-overlap_data |> 
+summary_overlap_data |> 
   filter(rank=="species") |> 
-  kable()
+  kable(digits=1)
 
 ```
 
 ### Conclusions
+#### analysis without controlling for uneven sampling of genomes across taxonomic levels
 * The sub-regions are less specific at the species level than the full-length. Still full-length has about 4.3%  overlap whereas the sub regions are between 9.9% and 11.1% overlap.
 * This analysis does not control for uneven sampling of different species.
+
+
+#### analysis when controlling for uneven sampling of genomes across taxonomic levels
+* The sub-regions are less specific at every taxonomic rank than  full-length sequences. 
+* Still full-length has about 5.7%  overlap whereas the sub-regions are between 12.8% and 18.2% overlap.
+
+
+
