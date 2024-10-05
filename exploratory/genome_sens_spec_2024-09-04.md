@@ -1,4 +1,4 @@
-Analyzing the sensitivity and specificity of ASVs for discriminating
+Analyzing the sensitivity and specificity of ESVs for discriminating
 between genomes
 ================
 Gaurav Bhatti; Pat Schloss
@@ -13,12 +13,12 @@ library(here)
 
 Our analysis will use full length sequences. But since we know that the
 sub regions are less diverse than the full length sequence. So does the
-number of ASVs per genome differ than for full length sequences? Are
-ASVs as specific when using the V4 region compared to full length
+number of ESVs per genome differ than for full length sequences? Are
+ESVs as specific when using the V4 region compared to full length
 sequences?
 
 ``` r
-count_tibble<- read_tsv(here("data/processed/rrnDB.count_tibble"),
+count_tibble<- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
                         col_types = "cccd")
 ```
 
@@ -61,35 +61,33 @@ count_tibble |>
 
 We see that most genomes (92%) have more than 1 copy of the *rrn*
 operon. I wonder whether those different copies are the same
-sequence/ASV…
+sequence/ESV…
 
-### Determine the number of ASVs per genome
+### Determine the number of ESVs per genome
 
 Considering that most genomes have more than 1 copy of the *rrn* operon,
-we need to know whether they all have the same ASV. Otherwise we run the
-risk of splitting a single genome into multiple ASVs.
+we need to know whether they all have the same ESV. Otherwise we run the
+risk of splitting a single genome into multiple ESVs.
 
 ``` r
 count_tibble |> 
   group_by(region,genome) |> 
-  summarise(n_asv= n(),
+  summarise(n_esv= n(),
             n_rrn = sum(count)) |> 
   group_by(region,n_rrn) |> 
-  summarize(med_n_asv= median(n_asv),
-            mean_n_asv=mean(n_asv),
-            lg_n_asv= quantile(n_asv,0.25),
-            up_n_asv= quantile(n_asv,0.75)) |> 
+  summarize(med_n_esv= median(n_esv),
+            mean_n_esv=mean(n_esv),
+            lg_n_esv= quantile(n_esv,0.25),
+            up_n_esv= quantile(n_esv,0.75)) |> 
   filter(n_rrn==7)
 ```
 
-    ## `summarise()` has grouped output by 'region'. You can override using the
-    ## `.groups` argument.
-    ## `summarise()` has grouped output by 'region'. You can override using the
-    ## `.groups` argument.
+    ## `summarise()` has grouped output by 'region'. You can override using the `.groups` argument.
+    ## `summarise()` has grouped output by 'region'. You can override using the `.groups` argument.
 
     ## # A tibble: 4 × 6
     ## # Groups:   region [4]
-    ##   region n_rrn med_n_asv mean_n_asv lg_n_asv up_n_asv
+    ##   region n_rrn med_n_esv mean_n_esv lg_n_esv up_n_esv
     ##   <chr>  <dbl>     <dbl>      <dbl>    <dbl>    <dbl>
     ## 1 v19        7         4       4.13        3        6
     ## 2 v34        7         1       1.88        1        2
@@ -99,31 +97,30 @@ count_tibble |>
 ``` r
 count_tibble |> 
   group_by(region,genome) |> 
-  summarise(n_asv= n(),
+  summarise(n_esv= n(),
             n_rrn = sum(count)) |> 
-  ggplot(aes(x=n_rrn,y=n_asv,color=region))+
+  ggplot(aes(x=n_rrn,y=n_esv,color=region))+
   geom_smooth(method = "lm")+
   geom_point()
 ```
 
-    ## `summarise()` has grouped output by 'region'. You can override using the
-    ## `.groups` argument.
+    ## `summarise()` has grouped output by 'region'. You can override using the `.groups` argument.
     ## `geom_smooth()` using formula = 'y ~ x'
 
 ![](genome_sens_spec_2024-09-04_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-Surprisingly (or not) the number of unique ASVs increases at the rate of
-about 2 ASVS per 3 copies of *rrn* operon in the genome.The sub-regions
-of the 16S rRNA gene have fewer ASVs per *rrn* operon.
+Surprisingly (or not) the number of unique ESVs increases at the rate of
+about 2 ESVS per 3 copies of *rrn* operon in the genome.The sub-regions
+of the 16S rRNA gene have fewer ESVs per *rrn* operon.
 
-### Determine whether an ASV is specific to the genome they are found in.
+### Determine whether an ESV is specific to the genome they are found in.
 
-Instead of looking at the number of ASVs per genome, we want to see the
-number of genomes per ASV.
+Instead of looking at the number of ESVs per genome, we want to see the
+number of genomes per ESV.
 
 ``` r
 count_tibble |> 
-  group_by(region,asv) |> 
+  group_by(region,esv) |> 
   summarise(n_genomes= n()) |> 
   count(n_genomes) |> 
   mutate(fraction=100*n/sum(n)) |> 
@@ -142,7 +139,7 @@ count_tibble |>
     ## 3 v4             1  9120     74.4
     ## 4 v45            1 12217     77.4
 
-We see that with full length sequences, 82% of the ASVs were unique to
+We see that with full length sequences, 82% of the ESVs were unique to
 the genome. For the sub regions, about 76% of the ASvs were unique to
 the genome.
 
@@ -150,5 +147,5 @@ the genome.
 
 - Can we correct for over representation?
 - Consider analysis at species, genus, family, etc. levels.
-- Consider looking at more broad definition of an ASV (upto 3%
+- Consider looking at more broad definition of an ESV (upto 3%
   differences in sequences).

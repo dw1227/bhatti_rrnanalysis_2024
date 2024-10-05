@@ -4,7 +4,7 @@
 #
 # input: mothur-formatted count file
 #
-# output: tidy data frame with asv, genome and count as columns
+# output: tidy data frame with esv, genome and count as columns
 # note: we expect command line arguements in order of input,output.
 
 
@@ -19,7 +19,7 @@ library(data.table)
 # pivot_longer_big_tibble= function(df,
 #                                     names_to="genome",
 #                                     values_to="count",
-#                                     id_columns="asv",
+#                                     id_columns="esv",
 #                                     chunk_size=250)
 #   {
 # # Get the column indices of the 'id' columns
@@ -52,9 +52,9 @@ output_file<-args[2]
 # output_file<-"data/v19/rrnDB.count_tibble"
 # Using tidyverse
 # system.time({vroom(input_file, delim = "\t") %>%
-#     rename(asv = Representative_Sequence) %>%
+#     rename(esv = Representative_Sequence) %>%
 #     select(-total) %>%
-#    pivot_longer_big_tibble(id_columns = "asv",
+#    pivot_longer_big_tibble(id_columns = "esv",
 #                                 names_to = "genome",
 #                                 values_to = "count",
 #                                 chunk_size = 250) %>%
@@ -69,7 +69,7 @@ output_file<-args[2]
 
 #####################Repeat the same with data.table and melt
 melt_big_data_table <- function(dt, 
-                                id_columns = "asv", 
+                                id_columns = "esv", 
                                 variable_name = "genome", 
                                 value_name = "count", 
                                 chunk_size = 250) {
@@ -99,9 +99,9 @@ melt_big_data_table <- function(dt,
 
 
 fread(input_file) %>%
-    rename(asv=Representative_Sequence) %>%
+    rename(esv=Representative_Sequence) %>%
     select(-total)  %>%
-    melt_big_data_table(id_columns = "asv",
+    melt_big_data_table(id_columns = "esv",
                         variable_name="genome",
                         value_name="count",
                             chunk_size = 2000) %>%

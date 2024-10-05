@@ -1,4 +1,4 @@
-Quantifying the coverage of ASVs within a species
+Quantifying the coverage of ESVs within a species
 ================
 G Bhatti; P Schloss
 9/21/2024
@@ -14,49 +14,49 @@ metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
   select(-scientific_name)
 
 
-asv<- read_tsv(here("data/processed/rrnDB.count_tibble"),
+esv<- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
                col_types = cols(.default = col_character(),
                                 count= col_integer()))
 
 
-metadata_asv<- inner_join(metadata, asv, by=c("genome_id"="genome"))
+metadata_esv<- inner_join(metadata, esv, by=c("genome_id"="genome"))
 ```
 
-### Does the number of ASVs per species increase with sampling effort?
+### Does the number of ESVs per species increase with sampling effort?
 
 ### Does this vary by region within the 16S rRNA gene?
 
 We have previously seen (genome_sens_spec_2024-09-04.md) that the number
-of ASVs per copy of the 16S rRNA gene is about 0.6. This means that if a
+of ESVs per copy of the 16S rRNA gene is about 0.6. This means that if a
 genome has 10 copies of the 16S rRNA gene, we would expect to see about
 6 different versions of the gene within that genome. Across genomes from
 the same species, we know that the number of copies of the gene is
 pretty consistent. So if we look at multiple genomes from the same
 species, will we see the same versions of the gene or will we see new
 versions of the gene? To answer this, we would like to look at the
-relationship between the number of ASVs found in a species per number of
+relationship between the number of ESVs found in a species per number of
 genomes in the species versus the number of genomes. Besides looking at
 the full length sequences, let’s also look at the V4, V3-4, and V4-5
 regions.
 
 ``` r
 # x= number of genomes for a particular species
-# y= ratio of number of ASVs per genome
+# y= ratio of number of ESVs per genome
 # each point represents a different species
 # each facet represents a different region
-species_asvs<-metadata_asv |> 
-  select(genome_id,species,region,asv,count) |> 
+species_esvs<-metadata_esv |> 
+  select(genome_id,species,region,esv,count) |> 
   group_by(region,species) |> 
   summarize(n_genomes= n_distinct(genome_id),
             n_rrns=sum(count)/n_genomes,
-            n_asvs= n_distinct(asv),
-            asv_rate=n_asvs/n_genomes,
+            n_esvs= n_distinct(esv),
+            esv_rate=n_esvs/n_genomes,
             .groups = "drop") 
 
 region_labels<- c("V1-V9","V4","V3-V4","V4-V5")
 names(region_labels)=c("v19","v4","v34","v45")
-species_asvs |> 
-  ggplot(aes(x=n_genomes,y=asv_rate)) +
+species_esvs |> 
+  ggplot(aes(x=n_genomes,y=esv_rate)) +
   geom_point(alpha=0.2)+
   geom_smooth()+
   # facet_grid(region~.)+
@@ -72,19 +72,19 @@ species_asvs |>
 
     ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 
-![](2024-09-21-asv-species-coverage_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+![](2024-09-21-esv-species-coverage_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 ``` r
-# species name, number of genomes, average number of rrns, number of ASVs across
+# species name, number of genomes, average number of rrns, number of ESVs across
 # genomes for each region of 16S rRNA gene.
-count_table<- species_asvs |>   
-  select(species, region, n_genomes,n_rrns,n_asvs) |> 
+count_table<- species_esvs |>   
+  select(species, region, n_genomes,n_rrns,n_esvs) |> 
   group_by(species) |> 
   mutate(n_genomes=max(n_genomes),
          n_rrns= max(n_rrns)) |> 
   ungroup() |> 
   pivot_wider(names_from = region,
-              values_from = n_asvs) |> 
+              values_from = n_esvs) |> 
   arrange(species) 
 
 # see also kableExtra
@@ -112,10 +112,10 @@ Ten most commonly sequenced species
 
 ### Conclusions
 
-- V1-V9 continues to add significant number of ASVs as more genomes are
+- V1-V9 continues to add significant number of ESVs as more genomes are
   sampled from a species.
 - The sub-regions seem to have plateaued indicating that perhaps we will
-  always add more ASVs for a species.
+  always add more ESVs for a species.
 - Perhaps we really are splitting genomes and species too finely with
-  ASVs.
+  ESVs.
 - Would like to look at individual genomes in more detail.

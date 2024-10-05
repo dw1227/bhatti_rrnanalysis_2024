@@ -4,8 +4,8 @@
 #
 # description: takes in fasta file and uniques and counts the
 # sequences.It then converts the count table to a tidy tibble with
-# columns asv, genome, and count to indicate the number of ties each
-# asv appears in a genome. Zero counts are discarded.
+# columns esv, genome, and count to indicate the number of ties each
+# esv appears in a genome. Zero counts are discarded.
 #
 # input: target - name of either the count_tibble or align file
 #
@@ -32,7 +32,7 @@ code/mothur/mothur "#unique.seqs(fasta=$temp_align, \
     format=name);count.seqs(group=$temp_groups,compress=FALSE)"
 
 code/run_r_script.sh code/convert_count_table_to_tibble.R \
- $stub_temp.count_table $stub.count_tibble
+ $stub_temp.count_table $stub.esv.count_tibble
 
 mv $stub_temp.unique.align $stub.unique.align
 
