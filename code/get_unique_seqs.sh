@@ -14,6 +14,7 @@
 
 target=$1
 
+
 stub=`echo $target | sed -E "s/(.*rrnDB).*/\1/"`
 stub_temp=$stub.temp
 
@@ -31,11 +32,11 @@ $temp_groups
 code/mothur/mothur "#unique.seqs(fasta=$temp_align, \
     format=name);count.seqs(group=$temp_groups,compress=FALSE)"
 
-code/run_r_script.sh code/convert_count_table_to_tibble.R \
- $stub_temp.count_table $stub.esv.count_tibble
+# code/run_r_script.sh code/convert_count_table_to_tibble.R \
+#  $stub_temp.count_table $stub.esv.count_tibble
 
 mv $stub_temp.unique.align $stub.unique.align
-
+mv $stub_temp.count_table $stub.count_table
 rm $stub_temp.*
 
 

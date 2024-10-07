@@ -1,5 +1,13 @@
 .SECONDARY:
-	
+.SECONDEXPANSION:
+
+regions=v4 v34 v45 v19
+thresholds=001 002 003 004 005 008 01 015 02 025 03 04 05
+
+print-% :
+	@echo '$*=$($*)'
+
+
 # Rule
 # Target: Prerequisites
 # (Tab)Recipe
@@ -51,9 +59,7 @@ data/%/rrnDB.align data/%/rrnDB.bad.accnos : code/extract_region.sh\
 	
 
 
-data/%/rrnDB.unique.align data/%/rrnDB.esv.count_tibble : code/count_unique_seqs.sh\
-	                                                 code/convert_count_table_to_tibble.R\
-													 code/run_r_script.sh\
+data/%/rrnDB.unique.align data/%/rrnDB.count_table : code/get_unique_seqs.sh\
 	                                                 data/%/rrnDB.align\
 													 code/mothur/mothur
 	$< $@ 
@@ -61,6 +67,40 @@ data/%/rrnDB.unique.align data/%/rrnDB.esv.count_tibble : code/count_unique_seqs
 
 
 
+# esv_tibbles_temp=$(foreach var_name,vector,what_to_do_with_var_names)
+esv_tibbles=$(foreach r,$(regions),data/$(r)/rrnDB.esv.count_tibble)
+
+$(esv_tibbles) : code/run_r_script.sh\
+	             code/get_esvs.R\
+				 $$(dir $$@)rrnDB.count_table
+	$^ $@ 
+
+# phony rule to create all esv_tibbles
+# esvs : $(esv_tibbles)
+
+data/%/rrnDB.unique.dist : code/get_distances.sh \
+	                        data/%/rrnDB.unique.align \
+							code/mothur/mothur
+	$< $@
+
+
+
+asv_tibbles=$(foreach r,$(regions),$(foreach t,$(thresholds),data/$(r)/rrnDB.$(t).count_tibble))
+
+$(asv_tibbles) : code/get_asvs.sh \
+	             code/run_r_script.sh \
+	             code/convert_shared_to_tibble.R\
+	             $$(dir $$@)rrnDB.unique.dist \
+				 $$(dir $$@)rrnDB.count_table \
+				 code/mothur/mothur
+	$< $@
+
+# asvs : $(asv_tibbles)
+
+easv_tibbles=$(esv_tibbles) $(asv_tibbles)
+
+easvs : $(easv_tibbles)
+	
 data/processed/rrnDB.esv.count_tibble: code/run_r_script.sh \
 	                               code/combine_count_tibble_files.R \
 								   data/v19/rrnDB.esv.count_tibble \
@@ -71,10 +111,9 @@ data/processed/rrnDB.esv.count_tibble: code/run_r_script.sh \
 
 
 
-
 README.md : README.Rmd \
 	        code/run_r_script.sh \
-			    code/render_markdown.R
+		    code/render_markdown.R
 	code/run_r_script.sh code/render_markdown.R "README.Rmd"
 
 
