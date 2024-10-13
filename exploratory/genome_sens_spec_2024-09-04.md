@@ -18,8 +18,11 @@ ESVs as specific when using the V4 region compared to full length
 sequences?
 
 ``` r
-count_tibble<- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
-                        col_types = "cccd")
+count_tibble<- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+                        col_types = cols(.default=col_character(),
+                                         count=col_integer())) |> 
+  filter(threshold=="esv") |> 
+  select(-threshold)
 ```
 
 We want to count and plot the number of copies per genome.
@@ -46,7 +49,7 @@ count_tibble |>
 
     ## # A tibble: 21 × 3
     ##    n_rrn     n fraction
-    ##    <dbl> <int>    <dbl>
+    ##    <int> <int>    <dbl>
     ##  1     1  3292     8.26
     ##  2     2  3927     9.85
     ##  3     3  4103    10.3 
@@ -88,7 +91,7 @@ count_tibble |>
     ## # A tibble: 4 × 6
     ## # Groups:   region [4]
     ##   region n_rrn med_n_esv mean_n_esv lg_n_esv up_n_esv
-    ##   <chr>  <dbl>     <dbl>      <dbl>    <dbl>    <dbl>
+    ##   <chr>  <int>     <dbl>      <dbl>    <dbl>    <dbl>
     ## 1 v19        7         4       4.13        3        6
     ## 2 v34        7         1       1.88        1        2
     ## 3 v4         7         1       1.38        1        1
@@ -120,7 +123,7 @@ number of genomes per ESV.
 
 ``` r
 count_tibble |> 
-  group_by(region,esv) |> 
+  group_by(region,easv) |> 
   summarise(n_genomes= n()) |> 
   count(n_genomes) |> 
   mutate(fraction=100*n/sum(n)) |> 
@@ -140,7 +143,7 @@ count_tibble |>
     ## 4 v45            1 12217     77.4
 
 We see that with full length sequences, 82% of the ESVs were unique to
-the genome. For the sub regions, about 76% of the ASvs were unique to
+the genome. For the sub regions, about 76% of the ESVs were unique to
 the genome.
 
 ### To be determined

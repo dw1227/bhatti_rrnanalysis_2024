@@ -14,9 +14,12 @@ metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
   select(-scientific_name)
 
 
-esv<- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
-               col_types = cols(.default = col_character(),
-                                count= col_integer()))
+esv<- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+                        col_types = cols(.default=col_character(),
+                                         count=col_integer())) |> 
+  filter(threshold=="esv") |> 
+  select(-threshold)
+
 
 
 metadata_esv<- inner_join(metadata, esv, by=c("genome_id"="genome"))
@@ -45,11 +48,11 @@ regions.
 # each point represents a different species
 # each facet represents a different region
 species_esvs<-metadata_esv |> 
-  select(genome_id,species,region,esv,count) |> 
+  select(genome_id,species,region,easv,count) |> 
   group_by(region,species) |> 
   summarize(n_genomes= n_distinct(genome_id),
             n_rrns=sum(count)/n_genomes,
-            n_esvs= n_distinct(esv),
+            n_esvs= n_distinct(easv),
             esv_rate=n_esvs/n_genomes,
             .groups = "drop") 
 

@@ -13,10 +13,12 @@ metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
   mutate(strain=if_else(scientific_name==species,NA_character_,scientific_name)) |> 
   select(-scientific_name)
 
+esv<- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+                        col_types = cols(.default=col_character(),
+                                         count=col_integer())) |> 
+  filter(threshold=="esv") |> 
+  select(-threshold)
 
-esv<- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
-               col_types = cols(.default = col_character(),
-                                count= col_integer()))
 
 
 metadata_esv<- inner_join(metadata, esv, by=c("genome_id"="genome"))
@@ -78,7 +80,7 @@ get_subsample_result<- function(threshold)
   # - focus on taxonomic ranks - from kingdom to species, esvs and region
   select(-genome_id,-count,-strain) |> 
   # - make data frame tidy
-  pivot_longer(cols=c(-esv,-region),
+  pivot_longer(cols=c(-easv,-region),
                names_to = "rank",
                values_to = "taxon") |> 
   # - remove lines from data where we don't have a taxonomy
@@ -86,7 +88,7 @@ get_subsample_result<- function(threshold)
   # - remove redundant lines
     distinct() |> 
   # for each region and taxonomic rank, group by esvs
-    group_by(region,rank,esv) |> 
+    group_by(region,rank,easv) |> 
   # - for each esv - count the number of taxa
     summarize(n_taxa=n(),.groups = "drop_last") |> 
   # - count the number of esvs that appear in more than one taxa

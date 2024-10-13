@@ -22,8 +22,11 @@ Our analysis will use full length sequences. But since we know that the sub regi
 
 
 ```{r n_rrn}
-count_tibble<- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
-                        col_types = "cccd")
+count_tibble<- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+                        col_types = cols(.default=col_character(),
+                                         count=col_integer())) |> 
+  filter(threshold=="esv") |> 
+  select(-threshold)
 ```
 
 We want to count and plot the number of copies per genome.
@@ -84,7 +87,7 @@ Instead of looking at the number of ESVs per genome, we want to see the number o
 
 ```{r}
 count_tibble |> 
-  group_by(region,esv) |> 
+  group_by(region,easv) |> 
   summarise(n_genomes= n()) |> 
   count(n_genomes) |> 
   mutate(fraction=100*n/sum(n)) |> 
@@ -92,7 +95,7 @@ count_tibble |>
 
 ```
 
-We see that with full length sequences, 82% of the ESVs were unique to the genome. For the sub regions, about 76% of the ASvs were unique to the genome.
+We see that with full length sequences, 82% of the ESVs were unique to the genome. For the sub regions, about 76% of the ESVs were unique to the genome.
 
 
 

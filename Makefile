@@ -99,14 +99,11 @@ $(asv_tibbles) : code/get_asvs.sh \
 
 easv_tibbles=$(esv_tibbles) $(asv_tibbles)
 
-easvs : $(easv_tibbles)
+# easvs : $(easv_tibbles)
 	
-data/processed/rrnDB.esv.count_tibble: code/run_r_script.sh \
+data/processed/rrnDB.easv.count_tibble: code/run_r_script.sh \
 	                               code/combine_count_tibble_files.R \
-								   data/v19/rrnDB.esv.count_tibble \
-								   data/v4/rrnDB.esv.count_tibble \
-								   data/v34/rrnDB.esv.count_tibble \
-								   data/v45/rrnDB.esv.count_tibble 
+								   $(easv_tibbles)
 	$^
 
 
@@ -120,7 +117,7 @@ README.md : README.Rmd \
 
 %.md: %.Rmd\
 	  data/references/genome_id_taxonomy.tsv\
-	  data/processed/rrnDB.esv.count_tibble\
+	  data/processed/rrnDB.easv.count_tibble\
 	  code/run_r_script.sh \
 	  code/render_markdown.R
 	code/run_r_script.sh code/render_markdown.R $<

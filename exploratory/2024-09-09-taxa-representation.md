@@ -17,9 +17,11 @@ metadata<- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
                      levels=c("kingdom","phylum","class","order",
                               "family","genus","species","strain")))
 
-esv<- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
-               col_types = cols(.default = col_character(),
-                                count= col_integer()))
+esv<- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+                        col_types = cols(.default=col_character(),
+                                         count=col_integer())) |> 
+  filter(threshold=="esv") |> 
+  select(-threshold)
 
 
 metadata_esv<- inner_join(metadata, esv, by=c("genome_id"="genome"))
@@ -27,7 +29,7 @@ metadata_esv<- inner_join(metadata, esv, by=c("genome_id"="genome"))
 
     ## Warning in inner_join(metadata, esv, by = c(genome_id = "genome")): Detected an unexpected many-to-many relationship between `x` and `y`.
     ## ℹ Row 1 of `x` matches multiple rows in `y`.
-    ## ℹ Row 119449 of `y` matches multiple rows in `x`.
+    ## ℹ Row 51376 of `y` matches multiple rows in `x`.
     ## ℹ If a many-to-many relationship is expected, set `relationship = "many-to-many"` to silence this warning.
 
 ### Find the number of taxa within each taxonomic rank
