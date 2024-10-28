@@ -130,6 +130,6 @@ exploratory : \
 	exploratory/2024-09-21-esv-species-coverage.md\
 	exploratory/2024-09-22-esv-taxa-overlap.md\
 	exploratory/2024-09-30-dominance-commonness-of-esvs.md\
-	exploratory/genome_sens_spec_2024-09-04.md
-	
+	exploratory/genome_sens_spec_2024-09-04.md\
+	exploratory/2024-10-13-threshold-to-drop-n-asvs.md
 

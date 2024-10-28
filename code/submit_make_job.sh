@@ -14,4 +14,5 @@
 cd /wsu/home/dw/dw12/dw1227/Documents/bhatti_rrnanalysis_2024
 
 # Run make to build easvs
-make easvs
+# make easvs
+make exploratory/2024-10-13-threshold-to-drop-n-asvs.md
