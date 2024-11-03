@@ -99,7 +99,7 @@ $(asv_tibbles) : code/get_asvs.sh \
 
 easv_tibbles=$(esv_tibbles) $(asv_tibbles)
 
-# easvs : $(easv_tibbles)
+easvs : $(easv_tibbles)
 	
 data/processed/rrnDB.easv.count_tibble: code/run_r_script.sh \
 	                               code/combine_count_tibble_files.R \

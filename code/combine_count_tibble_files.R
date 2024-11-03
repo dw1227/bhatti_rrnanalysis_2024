@@ -13,7 +13,6 @@ args<- commandArgs(trailingOnly = TRUE)
 tibble_files<-args
 
 
-
 read_count_tibble<-function(count_tibble_file){
   
 
